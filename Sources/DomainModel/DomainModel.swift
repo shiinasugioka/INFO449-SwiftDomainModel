@@ -109,14 +109,24 @@ public class Job {
             type = JobType.Salary(UInt(newAnnualWage))
         }
     }
+    
+    func convert() {
+        switch type {
+        case .Hourly(let hourlyWage):
+            let annualWage = Int((hourlyWage * 2000).rounded(.up))
+            type = JobType.Salary(UInt(annualWage))
+        case .Salary:
+            break
+        }
+    }
 }
 
 ////////////////////////////////////
 // Person
 //
 public class Person {
-    var firstName: String
-    var lastName: String
+    var firstName: String?
+    var lastName: String?
     var age: Int
     var job: Job? {
         didSet {
@@ -139,11 +149,24 @@ public class Person {
         self.age = age
     }
     
+    init(firstName: String, age: Int) {
+        self.firstName = firstName
+        self.age = age
+    }
+    
+    init(lastName: String, age: Int) {
+        self.lastName = lastName
+        self.age = age
+    }
+    
     func toString() -> String {
         // [Person: firstName: Ted lastName: Neward age: 45 job: Salary(1000) spouse: Charlotte]
         
-        var res =
-            "[Person: firstName:\(self.firstName) lastName:\(self.lastName) age:\(self.age)"
+        var res = "[Person:"
+        
+        res += " firstName:\(firstName ?? "nil")"
+        res += " lastName:\(lastName ?? "nil")"
+        res += " age:\(self.age)"
         
         if let job = job {
             res += " job: \(job.type)"
@@ -152,7 +175,7 @@ public class Person {
         }
         
         if let spouse = spouse {
-            res += " spouse: \(spouse.firstName)"
+            res += " spouse: \(spouse.firstName ?? "nil")"
         } else {
             res += " spouse:nil"
         }
